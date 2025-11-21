@@ -1,0 +1,27 @@
+name: ZAP baseline scan
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  security_scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run ZAP
+        run: |
+          docker run \
+            -v $(pwd):/zap/wrk \
+            owasp/zap2docker-stable \
+            zap-baseline.py \
+              -t https://juice-shop.herokuapp.com \
+              -r zap_report.html \
+              -I
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zap-report
+          path: zap_report.html
