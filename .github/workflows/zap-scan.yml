@@ -8,6 +8,7 @@ on:
 jobs:
   scan:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -15,13 +16,15 @@ jobs:
         run: |
           docker run \
             -v $(pwd):/zap/wrk \
-            zaproxy/zap-stable:latest \
+            -w /zap/wrk \
+            zaproxy/zap-stable \
             zap-baseline.py \
               -t https://juice-shop.herokuapp.com \
-              -r zap_report.html \
+              -r /zap/wrk/zap_report.html \
               -I
 
-      - uses: actions/upload-artifact@v4
+      - name: upload report
+        uses: actions/upload-artifact@v4
         with:
           name: zap-report
           path: zap_report.html
