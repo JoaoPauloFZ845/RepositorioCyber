@@ -1,4 +1,4 @@
-name: ZAP baseline scan
+name: zap scan
 
 on:
   push:
@@ -6,16 +6,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  security_scan:
+  scan:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run ZAP
+      - name: run zap baseline
         run: |
           docker run \
             -v $(pwd):/zap/wrk \
-            owasp/zap2docker-stable \
+            zaproxy/zap-stable:latest \
             zap-baseline.py \
               -t https://juice-shop.herokuapp.com \
               -r zap_report.html \
