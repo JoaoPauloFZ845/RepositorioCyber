@@ -6,25 +6,17 @@ on:
   workflow_dispatch:
 
 jobs:
-  scan:
+  zap-baseline:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: run zap baseline
-        run: |
-          docker run \
-            -v $(pwd):/zap/wrk \
-            -w /zap/wrk \
-            zaproxy/zap-stable \
-            zap-baseline.py \
-              -t https://juice-shop.herokuapp.com \
-              -r /zap/wrk/zap_report.html \
-              -I
-
-      - name: upload report
-        uses: actions/upload-artifact@v4
+      - name: OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.15.0
         with:
-          name: zap-report
-          path: zap_report.html
+          target: "https://juice-shop.herokuapp.com"
+          allow_issue_writing: false     # não abre Issue no repo
+          fail_action: false             # não quebra o pipeline se achar alerta
+          artifact_name: "zap-report"    # nome do artifact com os relatórios
